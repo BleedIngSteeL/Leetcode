@@ -1,0 +1,29 @@
+
+
+// we can do this by storing value of inorder traversal in array and just giving the kth element as inorder me sorted hota hai bst
+// but ye method hai without extra space use kiye hue 
+
+class Solution {
+public:
+    int kthSmallest(TreeNode* root, int &k) {
+        if(root==NULL){
+            return -1;
+        }
+        // LNR
+        //L
+        int leftAns=kthSmallest(root->left,k);
+        if(leftAns!=-1){
+            return leftAns;
+        }
+
+        //N
+        k--;
+        if(k==0){
+            return root->val;
+        }
+
+        //R
+        int rightAns=kthSmallest(root->right,k);
+        return rightAns;
+    }
+};
