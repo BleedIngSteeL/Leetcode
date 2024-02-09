@@ -1,0 +1,45 @@
+
+class compare{                      // khudka comparator function likh rhe h 
+    public:
+    bool operator()(ListNode* a, ListNode* b){
+        return a->val > b->val;    // minheap,  agar greatr ke jagah less krde to maxheap
+    }
+};
+
+class Solution {
+public:
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        priority_queue<ListNode*,vector<ListNode*>,compare> pq;   // minheap banaye
+        // har list ke pehle element ko heap me push kro agar null nhi h toh 
+        for(int i=0;i<lists.size();i++){
+            ListNode* listHead=lists[i];
+            if(listHead!=NULL){
+                pq.push(listHead);
+            }
+        }
+        // answer store krne ke liye khaali list banaye
+        ListNode* head=NULL;
+        ListNode* tail=NULL;
+
+        while(!pq.empty()){
+            ListNode* topNode=pq.top();
+            pq.pop();
+            // agar pehla hi push krr rhe h element to head tail sb ek pe hi rhega 
+            if(head==NULL){
+                head=topNode;
+                tail=topNode;
+                if(tail->next!=NULL){        // jis list me se push kiye h uske next ko heap me push kro
+                    pq.push(tail->next);
+                }
+            }
+            else{
+                tail->next=topNode;
+                tail=topNode;
+                if(tail->next!=NULL){
+                    pq.push(tail->next);
+                }
+            }
+        }
+        return head;
+    }
+};
