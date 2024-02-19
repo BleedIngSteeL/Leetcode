@@ -1,0 +1,54 @@
+// any node which is a part of cycle or pointing towards cycle can nevr be a safe node 
+// isiliye cycle detection in directed graph wale code me hi dfs run krte time cycle milne pe return na krke 
+// ek check laga denge ki id cycle mila hai toh check =0 and cycle nhi mila toh check =1
+// aur phir last me loop chala lenge jaha jaha check =1 hoga wo safe node hoga 
+
+class Solution {
+private:
+    bool dfs(int node,vector<vector<int>>& graph,vector<int> &vis,vector<int> &pathVis,vector<int>&check){
+        vis[node]=1;
+        pathVis[node]=1;
+
+        check[node]=0;
+        //tarverse for adjacent nodes
+        for(auto it: graph[node]){
+            // when the nod is not visited 
+            if(!vis[it]){
+                if(dfs(it,graph,vis,pathVis,check)==true){
+                    check[node]=0;
+                    return true;
+                }
+            }
+            // id node is visited but it has to be visited on the same path to be in cyclre in a directed graph
+            else if(pathVis[it]){
+                check[node]=0;
+                return true;
+            }
+        }
+        // no cycle found then it is safe so put check =1
+        check[node]=1;
+        pathVis[node]=0;
+        return false;
+    }
+public:
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n=graph.size();
+        vector<int> safeNodes;
+
+        vector<int> vis(n,0);
+        vector<int>pathVis(n,0);
+        vector<int>check(n,0);
+
+        for(int i=0;i<n;i++){
+            if(!vis[i]){
+                dfs(i,graph,vis,pathVis,check);
+            }
+        }
+        for(int i=0;i<n;i++){
+            if(check[i]==1){
+                safeNodes.push_back(i);
+            }
+        }
+        return safeNodes;
+    }
+};
