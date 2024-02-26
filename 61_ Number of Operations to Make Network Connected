@@ -1,0 +1,90 @@
+class DisjointSet{
+public:
+    vector<int> rank,parent,size;
+    DisjointSet(int n){
+        rank.resize(n+1,0);
+        parent.resize(n+1);
+        size.resize(n+1);
+        for(int i=0;i<n;i++){
+            parent[i]=i;
+            size[i]=1;
+        }
+    }
+
+    // path compression
+    int findUPar(int node){
+        // base case
+        if(node==parent[node]){
+            return node;
+        }
+        // recursive call
+        return parent[node]=findUPar(parent[node]);
+    }
+
+        // ulp means ultimate parent 
+    void unionByRank(int u,int v){
+        int ulp_u=findUPar(u);
+        int ulp_v=findUPar(v);
+        if(ulp_u==ulp_v) return;
+
+        // chota wala bade wale ke neeche lag jaega 
+        if(rank[ulp_u] < rank[ulp_v]){
+            parent[ulp_u]=ulp_v;
+        }
+        else if(rank[ulp_u] > rank[ulp_v]){
+            parent[ulp_v]=ulp_u;
+        }
+        else{     // case of boths rank same 
+            parent[ulp_v]=ulp_u;    // or u can write reverse of it as well
+            rank[ulp_u]++;
+        }
+    }
+
+
+    void unionBySize(int u,int v){
+        int ulp_u=findUPar(u);
+        int ulp_v=findUPar(v);
+        if(ulp_u==ulp_v) return;
+
+        if(size[ulp_u] < size[ulp_v]){
+            parent[ulp_u]=ulp_v;
+            size[ulp_v] += size[ulp_u];
+        }
+        else{      // isme equal wala case nhi likhenge kyuki uss case me v add krte hi the kisi ko kisi me 
+            parent[ulp_v]=ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+};
+
+
+class Solution {
+public:
+    int makeConnected(int V, vector<vector<int>>& connections) {
+        DisjointSet ds(V);
+        
+        int cntExtra=0;
+        for(auto it:connections){
+            int u=it[0];
+            int v=it[1];
+
+            if(ds.findUPar(u) == ds.findUPar(v)){
+                cntExtra++;
+            }
+            else{
+                ds.unionBySize(u,v);
+            }
+        }
+
+        int cntConnected=0;
+        for(int i=0;i<V;i++){
+            if(ds.parent[i]==i) cntConnected++;
+        }
+        int ans=cntConnected-1;  // as for n nodes we need n-1 minimum edges for them to be connected
+
+        if(cntExtra >= ans) return ans;
+        return -1;
+        
+        
+    }
+};
