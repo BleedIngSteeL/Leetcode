@@ -1,0 +1,28 @@
+class Solution {
+public:
+    string customSortString(string order, string s) {
+        map<char,int> mp; 
+        // order ko map me store kiya 
+        for(char c:order){
+            mp[c]++;
+        }
+        // s me jo extra char hai usko extra me daala aur jo same hai uska count +1 kr diya map me 
+        string extra="";
+        for(char c: s){
+            if(mp[c]==0) extra+= c;
+            else mp[c]++;
+        }
+        
+        string ans="";
+        // ab map me whi char hai jo order or s dono me hai , dono me hai toh cnt =2 hoga 
+        // toh ab unko ek ek krke nikaalo aur ans me daalo aur cnt--
+        for(char c: order){
+            while(mp[c]>1){
+                ans+=c;
+                mp[c]--;
+            }
+        }
+        // last me ans aur extra char ko add krdo easy peasyy
+        return ans+extra;    
+    }
+};
